@@ -16,7 +16,6 @@ var (
 
 // APIServer struct
 type APIServer struct {
-	config *config.Config
 	router *mux.Router
 }
 
@@ -29,7 +28,6 @@ func New(config *config.Config) *APIServer {
 	//http.Handle("/", router)
 
 	Instance = &APIServer{
-		config: config,
 		router: router,
 	}
 
@@ -40,7 +38,7 @@ func New(config *config.Config) *APIServer {
 func (s *APIServer) Start() error {
 	logger.Instance.LogInfo("Server starting...")
 
-	http.ListenAndServe(s.config.BindAddr, s.router)
+	http.ListenAndServe(config.Instance.BindAddr, s.router)
 
 	return nil
 }

@@ -21,13 +21,13 @@ func New(config *config.Config) *Logger {
 		logger: logrus.New(),
 	}
 
-	configureLogger()
+	configureLogger(config)
 
 	return Instance
 }
 
-func configureLogger() error {
-	level, err := logrus.ParseLevel("debug")
+func configureLogger(config *config.Config) error {
+	level, err := logrus.ParseLevel(config.LogLevel)
 
 	if err != nil {
 		return err

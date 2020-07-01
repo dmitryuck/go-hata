@@ -6,6 +6,7 @@ import (
 
 	"project/internal/apiserver"
 	"project/internal/config"
+	"project/internal/db"
 	"project/internal/logger"
 
 	"github.com/BurntSushi/toml"
@@ -22,14 +23,17 @@ func init() {
 func main() {
 	flag.Parse()
 
-	config := config.NewConfig()
+	config := config.New()
 
 	_, err := toml.DecodeFile(configPath, config)
+
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	logger.Instance = logger.New(config)
+
+	db.Instance = db.New(config)
 
 	apiserver.Instance = apiserver.New(config)
 
