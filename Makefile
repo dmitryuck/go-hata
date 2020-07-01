@@ -1,9 +1,10 @@
 .PHONY: build
 
 build:
-	go build -v ./
+	go build -v ./cmd/apiserver
 
 run:
-	go run ./cmd/apiserver
+	go build -v ./cmd/apiserver
+	./apiserver.exe
 
 .DEFAULT_GOAL := build
