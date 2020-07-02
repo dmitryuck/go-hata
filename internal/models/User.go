@@ -16,10 +16,12 @@ type User struct {
 	Likes    string             `bson:"likes"`
 	Guests   string             `bson:"guests"`
 	Location []string           `bson:"location"`
-	Language string             `bson:"language"`
-	Money    int                `bson:"money"`
-	Active   bool               `bson:"active"`
-	DeviceID string             `bson:"deviceId"`
-	Updated  time.Time          `bson:"updated"`
-	Created  time.Time          `bson:"created"`
+	City     string
+	Country  string
+	Language string    `bson:"language"`
+	Money    int       `bson:"money"`
+	Active   bool      `bson:"active"`
+	DeviceID string    `bson:"deviceId"`
+	Updated  time.Time `bson:"updated"`
+	Created  time.Time `bson:"created"`
 }

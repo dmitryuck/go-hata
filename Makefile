@@ -4,7 +4,7 @@ build:
 	go build -v ./cmd/apiserver
 
 run:
-	go build -v ./cmd/apiserver
-	./apiserver.exe
+	go build -o ./bin/apiserver.exe -v ./cmd/apiserver
+	./bin/apiserver.exe
 
 .DEFAULT_GOAL := build
