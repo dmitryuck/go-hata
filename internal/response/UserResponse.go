@@ -1,6 +1,7 @@
-package models
+package response
 
 import (
+	"project/internal/models"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,7 +26,8 @@ type UserResponse struct {
 	Created  time.Time          `json:"created"`
 }
 
-func (u UserResponse) Make(user *User) *UserResponse {
+// Make UserResponse
+func (u UserResponse) Make(user *models.User) *UserResponse {
 	return &UserResponse{
 		ID:       user.ID,
 		Name:     user.Name,

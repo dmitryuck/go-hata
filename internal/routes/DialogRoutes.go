@@ -29,19 +29,24 @@ func GetTest(w http.ResponseWriter, r *http.Request) {
 
 // GetFetchDialogs router
 func GetFetchDialogs(w http.ResponseWriter, r *http.Request) {
-	dialog := services.DialogService.FetchDialogs(services.DialogService{})
+	keys, ok := r.URL.Query()["profileId"]
 
-	dialogResponse := models.DialogResponse.Make(models.DialogResponse{}, &dialog)
+	if !ok || len(keys[0]) < 1 {
+		logger.Instance.LogInfo("Url Param 'key' is missing")
+		return
+	}
 
-	response.ResponseObject.Make(response.ResponseObject{}, w, response.StatusSuccess, dialogResponse)
+	dialogs, err := services.FetchDialogs(keys[0])
+	if err != nil {
+		response.ResponseObject.Make(response.ResponseObject{}, w, response.StatusFail, err)
+	}
+
+	response.ResponseObject.Make(response.ResponseObject{}, w, response.StatusSuccess, dialogs)
 }
 
 // GetUsersCount users count
 func GetUsersCount(w http.ResponseWriter, r *http.Request) {
 	collection := db.Instance.Database.Collection("users")
-
-	//a, _ := collection.CountDocuments(context.TODO(), bson.D{{}})
-	//logger.Instance.LogInfo(strconv.FormatInt(a, 10))
 
 	var a models.User
 
