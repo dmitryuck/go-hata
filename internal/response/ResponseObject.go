@@ -15,8 +15,8 @@ type ResponseObject struct {
 	Payload interface{} `json:"payload"`
 }
 
-// Make ResponseObject
-func Make(w http.ResponseWriter, status string, payload interface{}) {
+// MakeResponseObject make ResponseObject
+func MakeResponseObject(w http.ResponseWriter, status string, payload interface{}) {
 	responseObject := &ResponseObject{
 		Status:  status,
 		Payload: payload,

@@ -42,9 +42,9 @@ func AggregateDialogs(profileIDStr string, userIDStr string) ([]*models.Dialog, 
 		}},
 	}
 
-	collection := db.Instance.Database.Collection("dialogs")
+	dialogsCollection := db.Instance.Database.Collection("dialogs")
 
-	curr, err := collection.Aggregate(context, mongo.Pipeline{matchStage, lookupState})
+	curr, err := dialogsCollection.Aggregate(context, mongo.Pipeline{matchStage, lookupState})
 	if err != nil {
 		return nil, err
 	}
