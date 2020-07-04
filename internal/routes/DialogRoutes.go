@@ -1,24 +1,23 @@
 package routes
 
 import (
-	"context"
+	"encoding/json"
 	"net/http"
 
-	"project/internal/db"
 	"project/internal/logger"
-	"project/internal/models"
 	"project/internal/response"
 	"project/internal/services"
 	"project/internal/utils"
 
 	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // ApplyDialogRoutes for methods
 func ApplyDialogRoutes(router *mux.Router) {
 	//router.HandleFunc(utils.BuildRouteURL(""), GetTest).Methods("GET")
 	router.HandleFunc(utils.BuildRouteURL(FetchDialogsRoute), GetFetchDialogs).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(LoadDialogRoute), GetLoadDialog).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(CreateDialogRoute), PostCreateDialog).Methods("POST")
 }
 
 // GetTest test route
@@ -29,28 +28,63 @@ func GetTest(w http.ResponseWriter, r *http.Request) {
 
 // GetFetchDialogs router
 func GetFetchDialogs(w http.ResponseWriter, r *http.Request) {
-	keys, ok := r.URL.Query()["profileId"]
+	profileIDStr, err := utils.GetQueryParam(r, "profileId")
 
-	if !ok || len(keys[0]) < 1 {
-		logger.Instance.LogInfo("Url Param 'key' is missing")
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
 		return
 	}
 
-	dialogs, err := services.FetchDialogs(keys[0])
+	dialogs, err := services.FetchDialogs(profileIDStr)
 	if err != nil {
-		response.ResponseObject.Make(response.ResponseObject{}, w, response.StatusFail, err)
+		response.Make(w, response.StatusFail, err)
+		return
 	}
 
-	response.ResponseObject.Make(response.ResponseObject{}, w, response.StatusSuccess, dialogs)
+	response.Make(w, response.StatusSuccess, dialogs)
 }
 
-// GetUsersCount users count
-func GetUsersCount(w http.ResponseWriter, r *http.Request) {
-	collection := db.Instance.Database.Collection("users")
+// GetLoadDialog load dialog
+func GetLoadDialog(w http.ResponseWriter, r *http.Request) {
+	profileIDStr, err := utils.GetQueryParam(r, "profileId")
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
+		return
+	}
 
-	var a models.User
+	userIDStr, err := utils.GetQueryParam(r, "userId")
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
+		return
+	}
 
-	collection.FindOne(context.TODO(), bson.M{"name": "Test"}).Decode(&a)
+	dialog, err := services.LoadDialog(profileIDStr, userIDStr)
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
+		return
+	}
 
-	w.Write([]byte(string(a.DeviceID)))
+	response.Make(w, response.StatusSuccess, dialog)
+}
+
+// PostCreateDialog create new dialog
+func PostCreateDialog(w http.ResponseWriter, r *http.Request) {
+	var b struct {
+		profileIDStr string
+		userIDStr    string
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&b)
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
+		return
+	}
+
+	dialog, err := services.CreateDialog(b.profileIDStr, b.userIDStr)
+	if err != nil {
+		response.Make(w, response.StatusFail, err)
+		return
+	}
+
+	response.Make(w, response.StatusSuccess, dialog)
 }

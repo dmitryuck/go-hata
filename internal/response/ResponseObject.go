@@ -16,10 +16,14 @@ type ResponseObject struct {
 }
 
 // Make ResponseObject
-func (r ResponseObject) Make(w http.ResponseWriter, status string, payload interface{}) {
+func Make(w http.ResponseWriter, status string, payload interface{}) {
 	responseObject := &ResponseObject{
 		Status:  status,
 		Payload: payload,
+	}
+
+	if status == "fail" {
+		responseObject.Payload = payload.(error).Error()
 	}
 
 	jsonResponse, err := json.MarshalIndent(responseObject, "", " ")

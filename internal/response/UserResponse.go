@@ -26,8 +26,8 @@ type UserResponse struct {
 	Created  time.Time          `json:"created"`
 }
 
-// Make UserResponse
-func (u UserResponse) Make(user *models.User) *UserResponse {
+// MakeUserResponse UserResponse
+func MakeUserResponse(user *models.User) *UserResponse {
 	return &UserResponse{
 		ID:       user.ID,
 		Name:     user.Name,
