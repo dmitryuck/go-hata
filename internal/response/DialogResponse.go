@@ -9,7 +9,7 @@ import (
 )
 
 type DialogResponse struct {
-	ID          primitive.ObjectID   `json:"id"`
+	ID          primitive.ObjectID   `json:"_id"`
 	MemberIDs   []primitive.ObjectID `json:"memberIds"`
 	Users       []*UserResponse      `json:"users"`
 	DeleteIDs   []primitive.ObjectID `json:"deleteIds"`

@@ -7,4 +7,5 @@ const (
 	SendMessageRoute  = "send-message"
 	DeleteDialogRoute = "delete-dialog"
 	UpdateDialogRoute = "update-dialog"
+	FetchProfileRoute = "fetch-profile"
 )

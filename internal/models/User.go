@@ -7,7 +7,7 @@ import (
 )
 
 type User struct {
-	ID       primitive.ObjectID `bson:"_id"`
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
 	Name     string             `bson:"name"`
 	Sex      string             `bson:"sex"`
 	About    string             `bson:"about"`
@@ -16,12 +16,12 @@ type User struct {
 	Likes    string             `bson:"likes"`
 	Guests   string             `bson:"guests"`
 	Location []string           `bson:"location"`
-	City     string
-	Country  string
-	Language string    `bson:"language"`
-	Money    int       `bson:"money"`
-	Active   bool      `bson:"active"`
-	DeviceID string    `bson:"deviceId"`
-	Updated  time.Time `bson:"updated"`
-	Created  time.Time `bson:"created"`
+	City     string             `bson:"city,omitempty"`
+	Country  string             `bson:"country,omitempty"`
+	Language string             `bson:"language"`
+	Money    int                `bson:"money"`
+	Active   bool               `bson:"active"`
+	DeviceID string             `bson:"deviceId"`
+	Updated  time.Time          `bson:"updated"`
+	Created  time.Time          `bson:"created"`
 }

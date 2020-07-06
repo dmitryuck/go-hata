@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"project/internal/logger"
 	"project/internal/models"
 	"project/internal/response"
 	"project/internal/services"
@@ -15,24 +14,16 @@ import (
 
 // ApplyDialogRoutes for methods
 func ApplyDialogRoutes(router *mux.Router) {
-	//router.HandleFunc(utils.BuildRouteURL(""), GetTest).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(FetchDialogsRoute), GetFetchDialogs).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(LoadDialogRoute), GetLoadDialog).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(CreateDialogRoute), PostCreateDialog).Methods("POST")
-	router.HandleFunc(utils.BuildRouteURL(SendMessageRoute), PostSendMessage).Methods("POST")
-	router.HandleFunc(utils.BuildRouteURL(DeleteDialogRoute), PostDeleteDialog).Methods("POST")
+	router.HandleFunc(utils.BuildRouteURL(FetchDialogsRoute), FetchDialogsGet).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(LoadDialogRoute), LoadDialogGet).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(CreateDialogRoute), CreateDialogPost).Methods("POST")
+	router.HandleFunc(utils.BuildRouteURL(SendMessageRoute), SendMessagePost).Methods("POST")
+	router.HandleFunc(utils.BuildRouteURL(DeleteDialogRoute), DeleteDialogPost).Methods("POST")
 }
 
-// GetTest test route
-func GetTest(w http.ResponseWriter, r *http.Request) {
-	result := utils.BuildRouteURL(FetchDialogsRoute, "id")
-	logger.Instance.LogInfo(result)
-}
-
-// GetFetchDialogs router
-func GetFetchDialogs(w http.ResponseWriter, r *http.Request) {
+// FetchDialogsGet router
+func FetchDialogsGet(w http.ResponseWriter, r *http.Request) {
 	profileIDStr, err := utils.GetQueryParam(r, "profileId")
-
 	if err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
 		return
@@ -47,8 +38,8 @@ func GetFetchDialogs(w http.ResponseWriter, r *http.Request) {
 	response.MakeResponseObject(w, response.StatusSuccess, dialogs)
 }
 
-// GetLoadDialog load dialog
-func GetLoadDialog(w http.ResponseWriter, r *http.Request) {
+// LoadDialogGet load dialog
+func LoadDialogGet(w http.ResponseWriter, r *http.Request) {
 	profileIDStr, err := utils.GetQueryParam(r, "profileId")
 	if err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
@@ -70,8 +61,8 @@ func GetLoadDialog(w http.ResponseWriter, r *http.Request) {
 	response.MakeResponseObject(w, response.StatusSuccess, dialog)
 }
 
-// PostCreateDialog create new dialog
-func PostCreateDialog(w http.ResponseWriter, r *http.Request) {
+// CreateDialogPost create new dialog
+func CreateDialogPost(w http.ResponseWriter, r *http.Request) {
 	var b struct {
 		profileIDStr string
 		userIDStr    string
@@ -92,8 +83,8 @@ func PostCreateDialog(w http.ResponseWriter, r *http.Request) {
 	response.MakeResponseObject(w, response.StatusSuccess, dialog)
 }
 
-// PostSendMessage send message
-func PostSendMessage(w http.ResponseWriter, r *http.Request) {
+// SendMessagePost send message
+func SendMessagePost(w http.ResponseWriter, r *http.Request) {
 	var b struct {
 		profileIDStr string
 		dialogIDStr  string
@@ -115,8 +106,8 @@ func PostSendMessage(w http.ResponseWriter, r *http.Request) {
 	response.MakeResponseObject(w, response.StatusSuccess, updatedDialog)
 }
 
-// PostDeleteDialog delete dialog
-func PostDeleteDialog(w http.ResponseWriter, r *http.Request) {
+// DeleteDialogPost delete dialog
+func DeleteDialogPost(w http.ResponseWriter, r *http.Request) {
 	var b struct {
 		profileIDStr string
 		dialogIDStr  string
@@ -137,8 +128,8 @@ func PostDeleteDialog(w http.ResponseWriter, r *http.Request) {
 	response.MakeResponseObject(w, response.StatusSuccess, deleteResult)
 }
 
-// PutUpdateDialog update dialog
-func PutUpdateDialog(w http.ResponseWriter, r *http.Request) {
+// UpdateDialogPut update dialog
+func UpdateDialogPut(w http.ResponseWriter, r *http.Request) {
 	dialogIDStr, err := utils.GetQueryParam(r, "id")
 	if err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
