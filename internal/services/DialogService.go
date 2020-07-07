@@ -152,15 +152,13 @@ func DeleteDialog(profileIDStr string, dialogIDStr string) (bool, error) {
 func UpdateDialog(dialogIDStr string, body *models.Dialog) (*response.DialogResponse, error) {
 	dialogID, _ := primitive.ObjectIDFromHex(dialogIDStr)
 
-	context := context.TODO()
-
 	dialogsCollection := db.Instance.Database.Collection("dialogs")
 
 	after := options.After
 
 	var updatedDialog models.Dialog
 
-	dialogsCollection.FindOneAndUpdate(context, bson.M{"_id": dialogID}, body, &options.FindOneAndUpdateOptions{
+	dialogsCollection.FindOneAndUpdate(context.TODO(), bson.M{"_id": dialogID}, body, &options.FindOneAndUpdateOptions{
 		ReturnDocument: &after,
 	}).Decode(&updatedDialog)
 

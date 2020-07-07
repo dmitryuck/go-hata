@@ -10,6 +10,7 @@ import (
 	"project/internal/response"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -31,7 +32,7 @@ func FetchProfile(deviceIDStr string) (*response.UserResponse, error) {
 		SympatFetch: "",
 	})
 	if err != nil {
-
+		return nil, err
 	}
 
 	guests, err := json.Marshal(&models.Guests{
@@ -71,4 +72,38 @@ func FetchProfile(deviceIDStr string) (*response.UserResponse, error) {
 	}
 
 	return response.MakeUserResponse(profile), nil
+}
+
+// UpdateProfile update user
+func UpdateProfile(profileIDStr string, body *models.User) (*response.UserResponse, error) {
+	profileID, _ := primitive.ObjectIDFromHex(profileIDStr)
+
+	usersCollection := db.Instance.Database.Collection("users")
+
+	var profile *models.User
+
+	after := options.After
+
+	usersCollection.FindOneAndUpdate(context.TODO(), bson.M{"_id": profileID}, body, &options.FindOneAndUpdateOptions{
+		ReturnDocument: &after,
+	}).Decode(&profile)
+
+	return response.MakeUserResponse(profile), nil
+}
+
+type ProfileCounts struct {
+	Profile *response.UserResponse `json:"profile"`
+	Counts  *models.PanelCounts    `json:"counts"`
+}
+
+// FetchProfileCounts fetch profile and counts
+func FetchProfileCounts(profileIDStr string) (*ProfileCounts, error) {
+	panelCounts := &models.PanelCounts{}
+
+	profileCounts := &ProfileCounts{
+		Profile: nil,
+		Counts:  panelCounts,
+	}
+
+	return profileCounts, nil
 }

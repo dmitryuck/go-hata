@@ -1,7 +1,9 @@
 package routes
 
 import (
+	"encoding/json"
 	"net/http"
+	"project/internal/models"
 	"project/internal/response"
 	"project/internal/services"
 	"project/internal/utils"
@@ -12,6 +14,8 @@ import (
 // ApplyUserRoutes export
 func ApplyUserRoutes(router *mux.Router) {
 	router.HandleFunc(utils.BuildRouteURL(FetchProfileRoute), FetchProfileGet).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(UpdateProfileRoute, "id"), UpdateProfilePut).Methods("PUT")
+	router.HandleFunc(utils.BuildRouteURL(FetchProfileCountsRoute), FetchProfileCountsGet).Methods("GET")
 }
 
 // FetchProfileGet router
@@ -29,4 +33,45 @@ func FetchProfileGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.MakeResponseObject(w, response.StatusSuccess, profile)
+}
+
+// UpdateProfilePut create new user
+func UpdateProfilePut(w http.ResponseWriter, r *http.Request) {
+	profileIDStr, err := utils.GetQueryParam(r, "id")
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	var b models.User
+
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	updatedProfile, err := services.UpdateProfile(profileIDStr, &b)
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	response.MakeResponseObject(w, response.StatusSuccess, updatedProfile)
+}
+
+// FetchProfileCountsGet fetch counts and profile
+func FetchProfileCountsGet(w http.ResponseWriter, r *http.Request) {
+	profileIDStr, err := utils.GetQueryParam(r, "profileId")
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	profileCounts, err := services.FetchProfileCounts(profileIDStr)
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	response.MakeResponseObject(w, response.StatusSuccess, profileCounts)
 }

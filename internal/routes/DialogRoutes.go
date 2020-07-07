@@ -68,8 +68,7 @@ func CreateDialogPost(w http.ResponseWriter, r *http.Request) {
 		userIDStr    string
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&b)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
 		return
 	}
@@ -91,8 +90,7 @@ func SendMessagePost(w http.ResponseWriter, r *http.Request) {
 		text         string
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&b)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
 		return
 	}
@@ -113,8 +111,7 @@ func DeleteDialogPost(w http.ResponseWriter, r *http.Request) {
 		dialogIDStr  string
 	}
 
-	err := json.NewDecoder(r.Body).Decode(&b)
-	if err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
 		return
 	}
@@ -138,8 +135,7 @@ func UpdateDialogPut(w http.ResponseWriter, r *http.Request) {
 
 	var b models.Dialog
 
-	decodeErr := json.NewDecoder(r.Body).Decode(&b)
-	if decodeErr != nil {
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
 		response.MakeResponseObject(w, response.StatusFail, err)
 		return
 	}
