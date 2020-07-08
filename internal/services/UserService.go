@@ -98,11 +98,110 @@ type ProfileCounts struct {
 
 // FetchProfileCounts fetch profile and counts
 func FetchProfileCounts(profileIDStr string) (*ProfileCounts, error) {
+	profileID, _ := primitive.ObjectIDFromHex(profileIDStr)
+
 	panelCounts := &models.PanelCounts{}
 
 	profileCounts := &ProfileCounts{
 		Profile: nil,
 		Counts:  panelCounts,
+	}
+
+	usersCollection := db.Instance.Database.Collection("users")
+
+	var profile *models.User
+
+	context := context.TODO()
+
+	usersCollection.FindOne(context, bson.M{"_id": profileID}).Decode(&profile)
+
+	if profile != nil {
+		dialogs, err := FetchDialogs(profileIDStr)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, dialog := range dialogs {
+			panelCounts.Dialogs += dialog.UnreadCount
+		}
+
+		var profileLikeObj models.Likes
+
+		if err := json.Unmarshal([]byte(profile.Likes), &profileLikeObj); err != nil {
+			return nil, err
+		}
+
+		var likeUserIDs []primitive.ObjectID
+
+		for _, like := range profileLikeObj.SmbLikes {
+			if !like.IsOpen {
+				likeUserIDs = append(likeUserIDs, like.UserID)
+			}
+		}
+
+		var likeUsers []models.User
+
+		curLikes, err := usersCollection.Find(context, bson.M{"_id": bson.M{"$in": likeUserIDs}})
+		if err != nil {
+			return nil, err
+		}
+
+		for curLikes.Next(context) {
+			var user models.User
+
+			if err := curLikes.Decode(&user); err != nil {
+				return nil, err
+			}
+
+			likeUsers = append(likeUsers, user)
+		}
+
+		if err := curLikes.Err(); err != nil {
+			return nil, err
+		}
+
+		curLikes.Close(context)
+
+		panelCounts.Sympats = len(likeUsers)
+
+		var profileGuestsObject models.Guests
+
+		if err := json.Unmarshal([]byte(profile.Guests), &profileGuestsObject); err != nil {
+			return nil, err
+		}
+
+		var guestUserIDs []primitive.ObjectID
+
+		for _, like := range profileGuestsObject.MyGuests {
+			if !like.IsOpen {
+				guestUserIDs = append(guestUserIDs, like.UserID)
+			}
+		}
+
+		var guestUsers []models.User
+
+		curGuests, err := usersCollection.Find(context, bson.M{"_id": bson.M{"$in": guestUserIDs}})
+		if err != nil {
+			return nil, err
+		}
+
+		for curGuests.Next(context) {
+			var guest models.User
+
+			if err := curGuests.Decode(&guest); err != nil {
+				return nil, err
+			}
+
+			guestUsers = append(guestUsers, guest)
+		}
+
+		if err := curGuests.Err(); err != nil {
+			return nil, err
+		}
+
+		curGuests.Close(context)
+
+		panelCounts.Guests = len(guestUsers)
 	}
 
 	return profileCounts, nil

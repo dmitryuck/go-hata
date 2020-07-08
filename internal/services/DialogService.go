@@ -15,34 +15,6 @@ import (
 
 // FetchDialogs fetch dialogs
 func FetchDialogs(profileIDStr string) ([]*response.DialogResponse, error) {
-	/*context := context.TODO()
-
-	collection := db.Instance.Database.Collection("dialogs")
-
-	var dialogs []*models.Dialog
-
-	cur, err := collection.Find(context, bson.M{})
-	if err != nil {
-		return nil, err
-	}
-
-	for cur.Next(context) {
-		var d models.Dialog
-
-		err := cur.Decode(&d)
-		if err != nil {
-			return nil, err
-		}
-
-		dialogs = append(dialogs, &d)
-	}
-
-	if err := cur.Err(); err != nil {
-		return nil, err
-	}
-
-	cur.Close(context)*/
-
 	dialogs, err := aggregates.AggregateDialogs(profileIDStr, "")
 	if err != nil {
 		return nil, err
