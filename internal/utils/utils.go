@@ -18,11 +18,28 @@ func BuildRouteURL(route string, params ...string) string {
 
 // GetQueryParam get param from query string
 func GetQueryParam(r *http.Request, key string) (string, error) {
-	keys, ok := r.URL.Query()[key]
+	values, ok := r.URL.Query()[key]
 
-	if !ok || len(keys[0]) < 1 {
+	if !ok || len(values[0]) < 1 {
 		return "", errors.New("Url Param " + key + " is missing")
 	}
 
-	return keys[0], nil
+	return values[0], nil
+}
+
+// GetQueryParams get query params
+func GetQueryParams(r *http.Request, keys ...string) (map[string]string, error) {
+	result := make(map[string]string)
+
+	for _, key := range keys {
+		values, ok := r.URL.Query()[key]
+
+		if !ok || len(values[0]) < 1 {
+			return nil, errors.New("Url Param " + key + " is missing")
+		}
+
+		result[key] = values[0]
+	}
+
+	return result, nil
 }

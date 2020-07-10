@@ -206,3 +206,108 @@ func FetchProfileCounts(profileIDStr string) (*ProfileCounts, error) {
 
 	return profileCounts, nil
 }
+
+// FetchPeopleUsers fetch people options
+func FetchPeopleUsers(profileIDStr string, filterOptionsStr string, usersOffsetStr string) ([]*response.UserResponse, error) {
+	profileID, _ := primitive.ObjectIDFromHex(profileIDStr)
+
+	usersCollection := db.Instance.Database.Collection("users")
+
+	var profile *models.User
+
+	context := context.TODO()
+
+	usersCollection.FindOne(context, bson.M{"_id": profileID}).Decode(&profile)
+
+	locationsCollection := db.Instance.Database.Collection("locations")
+
+	var locations []models.Location
+
+	curLocations, err := locationsCollection.Find(context, bson.M{})
+	if err != nil {
+		return nil, err
+	}
+
+	for curLocations.Next(context) {
+		var location models.Location
+
+		if err := curLocations.Decode(&location); err != nil {
+			return nil, err
+		}
+
+		locations = append(locations, location)
+	}
+
+	if err := curLocations.Err(); err != nil {
+		return nil, err
+	}
+
+	curLocations.Close(context)
+
+	var targetSex string
+
+	if profile.Sex == "male" {
+		targetSex = "female"
+	}
+
+	if profile.Sex == "female" {
+		targetSex = "male"
+	}
+
+	usersMatch := bson.M{
+		"_id":    bson.M{"$ne": profileID},
+		"photos": bson.M{"$exists": true, "$ne": bson.A{}},
+	}
+
+	if targetSex != "" {
+		usersMatch["sex"] = targetSex
+	}
+
+	var users []models.User
+
+	curUsers, err := usersCollection.Find(context, usersMatch)
+	if err != nil {
+		return nil, err
+	}
+
+	for curUsers.Next(context) {
+		var user models.User
+
+		if err := curUsers.Decode(&user); err != nil {
+			return nil, err
+		}
+
+		users = append(users, user)
+	}
+
+	if err := curUsers.Err(); err != nil {
+		return nil, err
+	}
+
+	curUsers.Close(context)
+
+	var filterOptions models.FilterOptions
+
+	if err := json.Unmarshal([]byte(filterOptionsStr), &filterOptions); err != nil {
+		return nil, err
+	}
+
+	var usersResponse []*response.UserResponse
+
+	for _, user := range users {
+		if ApplyFilters(&user, filterOptions) {
+			usersResponse = append(usersResponse, response.MakeUserResponse(&user))
+		}
+	}
+
+	return usersResponse, nil
+}
+
+// ApplyFilters apply filters to user
+func ApplyFilters(user *models.User, filterOptions models.FilterOptions) bool {
+	if filterOptions.MinAge != 0 && filterOptions.MaxAge != 0 {
+
+	}
+
+	return true
+}

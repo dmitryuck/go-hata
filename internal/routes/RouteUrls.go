@@ -10,4 +10,5 @@ const (
 	FetchProfileRoute       = "fetch-profile"
 	UpdateProfileRoute      = "update-profile"
 	FetchProfileCountsRoute = "fetch-profile-counts"
+	FetchPeopleUsersRoute   = "fetch-people-users"
 )

@@ -16,6 +16,7 @@ func ApplyUserRoutes(router *mux.Router) {
 	router.HandleFunc(utils.BuildRouteURL(FetchProfileRoute), FetchProfileGet).Methods("GET")
 	router.HandleFunc(utils.BuildRouteURL(UpdateProfileRoute, "id"), UpdateProfilePut).Methods("PUT")
 	router.HandleFunc(utils.BuildRouteURL(FetchProfileCountsRoute), FetchProfileCountsGet).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(FetchPeopleUsersRoute), FetchPeopleUsers).Methods("GET")
 }
 
 // FetchProfileGet router
@@ -74,4 +75,21 @@ func FetchProfileCountsGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.MakeResponseObject(w, response.StatusSuccess, profileCounts)
+}
+
+// FetchPeopleUsers fetch people users
+func FetchPeopleUsers(w http.ResponseWriter, r *http.Request) {
+	queryParams, err := utils.GetQueryParams(r, "profileId", "filterOptions", "usersOffset")
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	peopleUsers, err := services.FetchPeopleUsers(queryParams["profileId"], queryParams["filterOptions"], queryParams["usersOffset"])
+	if err != nil {
+		response.MakeResponseObject(w, response.StatusFail, err)
+		return
+	}
+
+	response.MakeResponseObject(w, response.StatusSuccess, peopleUsers)
 }
