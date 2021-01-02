@@ -14,11 +14,11 @@ import (
 
 // ApplyDialogRoutes for methods
 func ApplyDialogRoutes(router *mux.Router) {
-	router.HandleFunc(utils.BuildRouteURL(FetchDialogsRoute), FetchDialogsGet).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(LoadDialogRoute), LoadDialogGet).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(CreateDialogRoute), CreateDialogPost).Methods("POST")
-	router.HandleFunc(utils.BuildRouteURL(SendMessageRoute), SendMessagePost).Methods("POST")
-	router.HandleFunc(utils.BuildRouteURL(DeleteDialogRoute), DeleteDialogPost).Methods("POST")
+	router.HandleFunc(utils.BuildRouteURL(FetchDialogsRoute), FetchDialogsGet).Methods(http.MethodGet)
+	router.HandleFunc(utils.BuildRouteURL(LoadDialogRoute), LoadDialogGet).Methods(http.MethodGet)
+	router.HandleFunc(utils.BuildRouteURL(CreateDialogRoute), CreateDialogPost).Methods(http.MethodPost)
+	router.HandleFunc(utils.BuildRouteURL(SendMessageRoute), SendMessagePost).Methods(http.MethodPost)
+	router.HandleFunc(utils.BuildRouteURL(DeleteDialogRoute), DeleteDialogPost).Methods(http.MethodPost)
 }
 
 // FetchDialogsGet router

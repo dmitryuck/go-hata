@@ -91,6 +91,7 @@ func UpdateProfile(profileIDStr string, body *models.User) (*response.UserRespon
 	return response.MakeUserResponse(profile), nil
 }
 
+// ProfileCounts struct
 type ProfileCounts struct {
 	Profile *response.UserResponse `json:"profile"`
 	Counts  *models.PanelCounts    `json:"counts"`

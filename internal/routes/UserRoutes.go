@@ -13,10 +13,10 @@ import (
 
 // ApplyUserRoutes export
 func ApplyUserRoutes(router *mux.Router) {
-	router.HandleFunc(utils.BuildRouteURL(FetchProfileRoute), FetchProfileGet).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(UpdateProfileRoute, "id"), UpdateProfilePut).Methods("PUT")
-	router.HandleFunc(utils.BuildRouteURL(FetchProfileCountsRoute), FetchProfileCountsGet).Methods("GET")
-	router.HandleFunc(utils.BuildRouteURL(FetchPeopleUsersRoute), FetchPeopleUsers).Methods("GET")
+	router.HandleFunc(utils.BuildRouteURL(FetchProfileRoute), FetchProfileGet).Methods(http.MethodGet)
+	router.HandleFunc(utils.BuildRouteURL(UpdateProfileRoute, "id"), UpdateProfilePut).Methods(http.MethodPut)
+	router.HandleFunc(utils.BuildRouteURL(FetchProfileCountsRoute), FetchProfileCountsGet).Methods(http.MethodGet)
+	router.HandleFunc(utils.BuildRouteURL(FetchPeopleUsersRoute), FetchPeopleUsers).Methods(http.MethodGet)
 }
 
 // FetchProfileGet router
